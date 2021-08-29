@@ -106,7 +106,7 @@ def new(ctx, prompt, template, name):
             shutil.copy(os.path.join(p, name), os.path.join(new_path, name))
 
         # Link files that need to be linked
-        print("Linking files")
+        print("Linking files...")
         for name in templ_conf["link"]:
             os.link(os.path.join(p, name), os.path.join(new_path, name))
 
