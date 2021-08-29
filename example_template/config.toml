@@ -1,0 +1,10 @@
+instantiate = ["main.tex", "Makefile"]
+copy = []
+link = []
+
+[variables]
+title.prompt = "Title"
+title.default = "Title"
+
+author.prompt = "Author"
+author.default = "Jane Doe"

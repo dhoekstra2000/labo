@@ -10,7 +10,7 @@ template_dir = /home/user/.labo
 ```
 
 ## Templates
-A template for a LaTeX project for `labo` is specified by a `config.toml` file in a folder in the template directory.
+A template for a LaTeX project for `labo` is specified by a `config.toml` file in a folder in the template directory. See `example_template/` for a simple example.
 The name of the template is determined by the name of this folder. In the config file the template files can be specified using the `instantiate` key.
 For the time being it supports rendering LaTeX and Makefile templates using Jinja2.
 Files that need to be copied or need to be linked to the new project can also be specified using the `copy` and `link` keys, respectively.
