@@ -33,6 +33,30 @@ def ls(ctx):
             print(f"- {c}")
 
 
+@click.command()
+@click.pass_context
+@click.argument("template")
+def help(ctx, template):
+    g_conf = ctx.obj["config"]
+    p = os.path.join(g_conf["template_dir"], template)
+    if os.path.isdir(p):
+        conf_p = os.path.join(p, "config.toml")
+        with open(conf_p, "r") as f:
+            templ_conf = tomli.load(f)
+
+        print(f"Name: {template}")
+        if "help" in templ_conf:
+            print(templ_conf["help"])
+
+        print(f"Options: {' '.join(templ_conf['options'])}")
+        print(f"Variables: {' '.join(templ_conf['variables'].keys())}")
+        print(f"Templates: {' '.join(templ_conf['instantiate'])}")
+        print(f"Copies: {' '.join(templ_conf['copy'])}")
+        print(f"Links: {' '.join(templ_conf['link'])}")
+    else:
+        print(f"Template '{template}' not found")
+
+
 @click.command(
     context_settings=dict(ignore_unknown_options=True, allow_extra_args=True)
 )
@@ -117,4 +141,5 @@ def new(ctx, prompt, template, name):
 
 
 cli.add_command(ls)
+cli.add_command(help)
 cli.add_command(new)
