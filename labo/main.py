@@ -48,11 +48,20 @@ def help(ctx, template):
         if "help" in templ_conf:
             print(templ_conf["help"])
 
-        print(f"Options: {' '.join(templ_conf['options'])}")
-        print(f"Variables: {' '.join(templ_conf['variables'].keys())}")
-        print(f"Templates: {' '.join(templ_conf['instantiate'])}")
-        print(f"Copies: {' '.join(templ_conf['copy'])}")
-        print(f"Links: {' '.join(templ_conf['link'])}")
+        if "options" in templ_conf:
+            print(f"Options: {' '.join(templ_conf['options'])}")
+
+        if "variables" in templ_conf:
+            print(f"Variables: {' '.join(templ_conf['variables'].keys())}")
+
+        if "instantiate" in templ_conf:
+            print(f"Templates: {' '.join(templ_conf['instantiate'])}")
+
+        if "copy" in templ_conf:
+            print(f"Copies: {' '.join(templ_conf['copy'])}")
+
+        if "copy" in templ_conf:
+            print(f"Links: {' '.join(templ_conf['link'])}")
     else:
         print(f"Template '{template}' not found")
 
@@ -93,15 +102,16 @@ def new(ctx, prompt, template, name):
 
         # Get all variables
         variables = {}
-        click.echo("Instantiating template variables...")
-        for k in templ_conf["variables"].keys():
-            if prompt:
-                variables[k] = click.prompt(
-                    templ_conf["variables"][k]["prompt"],
-                    default=templ_conf["variables"][k]["default"],
-                )
-            else:
-                variables[k] = templ_conf["variables"][k]["default"]
+        if "variables" in templ_conf:
+            click.echo("Instantiating template variables...")
+            for k in templ_conf["variables"].keys():
+                if prompt:
+                    variables[k] = click.prompt(
+                        templ_conf["variables"][k]["prompt"],
+                        default=templ_conf["variables"][k]["default"],
+                    )
+                else:
+                    variables[k] = templ_conf["variables"][k]["default"]
 
         # Create dir based on name
         new_path = os.path.abspath(os.path.join(".", name))
@@ -113,26 +123,29 @@ def new(ctx, prompt, template, name):
             variables = {**variables, **vrs}
 
         # Instantiate templates
-        print("Instantiating templates...")
-        for t_name in templ_conf["instantiate"]:
-            name, ext = os.path.splitext(t_name)
-            document = ""
-            if ext == ".tex":
-                document = tmpl.render_latex_template(p, t_name, variables)
-            elif name == "Makefile":
-                document = tmpl.render_makefile_template(p, t_name, variables)
-            with open(os.path.join(new_path, t_name), "w") as f:
-                f.write(document)
+        if "instantiate" in templ_conf:
+            print("Instantiating templates...")
+            for t_name in templ_conf["instantiate"]:
+                name, ext = os.path.splitext(t_name)
+                document = ""
+                if ext == ".tex":
+                    document = tmpl.render_latex_template(p, t_name, variables)
+                elif name == "Makefile":
+                    document = tmpl.render_makefile_template(p, t_name, variables)
+                with open(os.path.join(new_path, t_name), "w") as f:
+                    f.write(document)
 
         # Copy the files that need to be copied
-        print("Copying files...")
-        for name in templ_conf["copy"]:
-            shutil.copy(os.path.join(p, name), os.path.join(new_path, name))
+        if "copy" in templ_conf:
+            print("Copying files...")
+            for name in templ_conf["copy"]:
+                shutil.copy(os.path.join(p, name), os.path.join(new_path, name))
 
         # Link files that need to be linked
-        print("Linking files...")
-        for name in templ_conf["link"]:
-            os.link(os.path.join(p, name), os.path.join(new_path, name))
+        if "link" in templ_conf:
+            print("Linking files...")
+            for name in templ_conf["link"]:
+                os.link(os.path.join(p, name), os.path.join(new_path, name))
 
         print(f"Created new LaTeX project: {new_path}")
 
